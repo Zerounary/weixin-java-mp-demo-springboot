@@ -107,7 +107,7 @@ public class JSONRepl {
                 if(val != null)
                     rep = val.toString();
                 else
-                    rep = newPath + "不存在";
+                    rep = newPath + ",不存在";
             }
         }else if(isSet(query)){
             String newPath = parseQueryPath(query);

@@ -25,7 +25,7 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType;
 @Component
 public class MsgHandler extends AbstractHandler {
 	
-
+	private static JSONObject pattern = new JSONObject();
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService weixinService,
@@ -47,11 +47,30 @@ public class MsgHandler extends AbstractHandler {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-
+        
+        String content = null;
+        switch (wxMessage.getContent()) {
+		case "上海公交":
+			this.pattern.put(wxMessage.getFromUser(), wxMessage.getContent());
+			content = "已切换到【上海公交】对话模式";
+			break;
+		case "JREPL":
+			this.pattern.put(wxMessage.getFromUser(), wxMessage.getContent());
+			content = "已切换到【JREPL】模式";
+			break;
+		}
         //TODO 组装回复消息
 //        String content = "收到信息内容：" + JsonUtils.toJson(wxMessage);
-//        String content = BusRepl.repl(wxMessage.getFromUser(),wxMessage.getContent(), weixinService);
-        String content = JCRepl.repl(wxMessage.getFromUser(),wxMessage.getContent(), weixinService);
+        
+        if(content == null) {
+        	if("上海公交".equals(this.pattern.get(wxMessage.getFromUser()))) {
+            	content = BusRepl.repl(wxMessage.getFromUser(),wxMessage.getContent(), weixinService);
+            }else if("JREPL".equals(this.pattern.get(wxMessage.getFromUser()))) {
+            	content = JCRepl.repl(wxMessage.getFromUser(),wxMessage.getContent(), weixinService);
+            }else {
+            	content = "请选择功能模块：上海公交，JREPL";
+            }
+        }
         return new TextBuilder().build(content, wxMessage, weixinService);
 
     }
