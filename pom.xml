@@ -68,6 +68,18 @@
             <artifactId>jedis</artifactId>
             <version>2.9.0</version>
         </dependency>
+        
+		<dependency>
+            <groupId>bus</groupId>
+            <artifactId>bus.shanghai</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.63_preview_01_self</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
