@@ -66,7 +66,7 @@ public class JSONRepl {
             buffer.append("\r\n");;
             buffer.append("【跟我说】：“设置(对象|列表)? [Path路径] [值]”，可以创建属性");
             buffer.append("\r\n");;
-            buffer.append("【跟我说】：“添加(对象|列表)? [值]”，只有当前指向的是数组时刻操作天机值， 对象和列表不需要赋值");
+            buffer.append("【跟我说】：“添加(对象|列表)? [值]”，只有当前指向的是数组时刻操作添加值， 对象和列表不需要赋值");
             buffer.append("\r\n");;
             buffer.append("【跟我说】：“查看所有属性名”，查看当前对象的所有属性名");
             buffer.append("\r\n");;
@@ -79,6 +79,8 @@ public class JSONRepl {
             buffer.append("【跟我说】：“删除 [Path路径]”，删除属性");
             buffer.append("\r\n");;
             buffer.append("【跟我说】：“回归根目录”，回归到根目录");
+            buffer.append("\r\n");;
+            buffer.append("【跟我说】：“回归上级”，回归到上一级根目录");
             buffer.append("\r\n");;
             rep = buffer.toString();
         }
@@ -239,7 +241,10 @@ public class JSONRepl {
      */
     private String parseQueryPath(String query) {
         if(isEval(query)){
-            return this.path + "." + StringUtils.removeFirst(query, "查看").trim();
+        	String tgp = StringUtils.removeFirst(query, "查看").trim();
+        	if(tgp.startsWith("["))
+        		return this.path + tgp;
+            return this.path + "." + tgp;
         }else if(isSet(query)){
             return this.path + "." + StringUtils.substringBeforeLast(StringUtils.removeFirst(query, "设置(对象|列表)?").trim(), " ");
         }else if(isContainsValue(query)){
@@ -377,8 +382,11 @@ public class JSONRepl {
         this.path = "$";
     }
     private void setPathToParent(){
-    	if(this.path.contains("."))
+    	if(this.path.endsWith("]")) {
+    		this.path = StringUtils.substringBeforeLast(this.path, "[");
+    	}else if(this.path.contains(".")) {
     		this.path = StringUtils.substringBeforeLast(this.path, ".");
+    	}
     }
 
 }
